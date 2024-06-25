@@ -32,7 +32,7 @@ class sign_up_model:
             # validating username
             username = self.validate_user_input.username_validation(self.username)
             if username != self.username:
-                return jsonify({"error": "Invalid username address."}), 400
+                return jsonify({"error": "Invalid username."}), 400
             # validating password
             password = self.validate_user_input.password_validation(self.password)
             if str(password) != str(self.password):
@@ -56,6 +56,7 @@ class sign_up_model:
             try:
                 self.cur.execute(query, params)
                 self.conn.commit()
+                # account created successfully
                 return jsonify({"message": "User account created successfully"}), 201
             except mysql.connector.Error as err:
                 print(f"Error: {err}")
@@ -66,7 +67,7 @@ class sign_up_model:
         
         except KeyError as ke:
             missing_field = ke.args[0]
-            return jsonify({"message": f"Missing field: {missing_field}"}), 400
+            return jsonify({"error": f"Missing field: {missing_field}"}), 400
         except Exception as e:
             print(f"Exception: {e}")
             return jsonify({"error": "An error occurred while creating the account. Please try again later."}), 500
