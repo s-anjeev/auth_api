@@ -45,7 +45,7 @@ class login_model:
             exp_epoch_time = int(exp_time.timestamp())
 
             user={
-                "user_id":is_user[0]["id"],
+                "user_id":is_user[0]["user_id"],
                 "username":is_user[0]["username"],
                 "email":is_user[0]["email"],
                 "role":is_user[0]["role"],
@@ -61,7 +61,7 @@ class login_model:
                 "token":TOKEN
 
             }
-            if self.store_session(is_user[0]["id"],TOKEN):
+            if self.store_session(is_user[0]["user_id"],TOKEN):
                 # login successful
                 return make_response({"user": response}, 200)
             else:
