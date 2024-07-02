@@ -1,6 +1,6 @@
 import re
 from flask import jsonify
-
+from datetime import datetime
 class input_validation():
     def __init__(self):
         pass
@@ -72,3 +72,94 @@ class input_validation():
             return jsonify({"error": "Password must be 8-36 characters long and include at least one lowercase letter, one uppercase letter, one number, and one special character."}), 400
         
 
+    # Function to validate first name and last name
+    def first_last_name_validation(self, name):
+        name = str(name).strip()
+        
+        if not name:
+            return jsonify({"error": "Name must be provided and cannot be empty."}), 400
+        
+        if len(name) < 3 or len(name) > 20:
+            return jsonify({"error": "Name must be between 3-20 characters long."}), 400
+        
+        if not re.match("^[a-zA-Z\s]+$", name):
+            return jsonify({"error": "Name must contain only alphabetic characters and spaces."}), 400
+
+        # If all validations pass
+        return True
+    
+    # validate country code
+    def country_validation(self, country_code):
+        # Predefined list of valid country codes
+        valid_country_codes = ["IND", "USA", "PAK", "CAN", "AUS", "GBR", "FRA", "DEU", "JPN", "CHN"]
+
+        country_code = str(country_code).strip().upper()
+        
+        if not country_code:
+            return jsonify({"error": "Country code must be provided and cannot be empty."}), 400
+        
+        if country_code not in valid_country_codes:
+            return jsonify({"error": "Invalid country code. Please provide a valid country code."}), 400
+        
+        # If validation passes
+        return True
+
+    # Function to validate Indian phone number
+    def phone_number_validation(self, phone_number):
+        phone_number = str(phone_number).strip()
+        
+        # Regular expression to match a valid Indian phone number
+        pattern = re.compile(r"^[6-9]\d{9}$")
+        
+        if not phone_number:
+            return jsonify({"error": "Phone number must be provided and cannot be empty."}), 400
+        
+        if not pattern.match(phone_number):
+            return jsonify({"error": "Invalid phone number. Phone number must be 10 digits long and start with a digit between 6 and 9."}), 400
+
+        # If validation passes
+        return True
+    
+    # Function to validate date of birth
+    def date_of_birth_validation(self, date_of_birth):
+        try:
+            # Convert the input to a datetime object
+            dob = datetime.strptime(date_of_birth, "%Y-%m-%d")
+            
+            # Check if the date of birth is in the future
+            if dob > datetime.today():
+                return jsonify({"error": "Date of birth cannot be a future date."}), 400
+            
+            # If validation passes
+            return True
+        except ValueError:
+            # If the input is not a valid date
+            return jsonify({"error": "Invalid date format. Please use YYYY-MM-DD format."}), 400
+        
+
+     # Function to validate gender
+    def gender_validation(self, gender):
+        gender = str(gender).strip().lower()
+        
+        valid_genders = ["male", "female", "others"]
+
+        if gender not in valid_genders:
+            return jsonify({"error": "Invalid gender. Gender must be one of 'male', 'female', or 'others'."}), 400
+
+        # If validation passes
+        return True
+    
+    # Function to validate avatar endpoint
+    def avatar_endpoint_validation(self, avatar_url):
+        avatar_url = str(avatar_url).strip()
+
+        valid_extensions = ["jpg", "jpeg", "png", "gif", "bmp"]
+
+        # Check if avatar_url starts with '/' and has a valid extension
+        if not avatar_url.startswith("/") or not any(avatar_url.lower().endswith(ext) for ext in valid_extensions):
+            return jsonify({
+                "error": f"Invalid avatar endpoint. Must start with '/' and have one of the following extensions: {', '.join(valid_extensions)}"
+            }), 400
+
+        # If validation passes
+        return True

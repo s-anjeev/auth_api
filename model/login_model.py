@@ -49,6 +49,7 @@ class login_model:
                 "username":is_user[0]["username"],
                 "email":is_user[0]["email"],
                 "role":is_user[0]["role"],
+                # "exp": exp_epoch_time  # Using 'exp' for the expiration time claim
                 "exp_time":exp_epoch_time
             }
 

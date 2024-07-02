@@ -9,7 +9,7 @@ class token_auth():
     def __init__(self):
         pass
 
-    def token_auth(self, endpoint=""):  
+    def token_auth(self):  
         def inner1(func):
             @wraps(func)
             def inner2(*args, **kwargs):
@@ -26,6 +26,7 @@ class token_auth():
                             secret = jwt_secret["secret"]
                             decoded_token = jwt.decode(token, secret, algorithms="HS256")
                             user_id = decoded_token["user_id"]
+                            print(decoded_token)
                             # Pass the user_id to the endpoint function
                             kwargs['user_id'] = user_id
                         except jwt.ExpiredSignatureError:
