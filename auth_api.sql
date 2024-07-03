@@ -57,3 +57,16 @@ SELECT upd.user_id AS user_id,
        u.role
 FROM Users_personal_details upd
 JOIN Users u ON upd.user_id = u.user_id;
+
+
+-- create table admin 
+CREATE TABLE IF NOT EXISTS Admins (
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updating_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    role VARCHAR(50) DEFAULT 'admin',
+    session_token VARCHAR(255),
+    UNIQUE (email)
+);
