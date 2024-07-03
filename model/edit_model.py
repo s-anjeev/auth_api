@@ -111,3 +111,60 @@ class edit_user:
     def calculate_age(self, date_of_birth):
         today = datetime.today()
         return today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+
+
+    # upload user avatar
+    def edit_user_avatar(self, unique_file_address, user_id):
+        try:
+            avatar_url = unique_file_address
+
+            # Validate avatar endpoint
+            avatar_valid = self.validate_user_input.avatar_endpoint_validation(avatar_url)
+            if not avatar_valid:
+                return avatar_valid
+
+
+            # Check if user exists in the Users_personal_details table
+            query_search = "SELECT * FROM Users_personal_details WHERE user_id = %s"
+            param_search = (user_id,)
+            self.cur.execute(query_search, param_search)
+            record_exist = self.cur.fetchone()  # Use fetchone to get a single record
+
+            # Clear any remaining results to avoid the Unread result found error
+            self.cur.fetchall()
+
+            if record_exist:
+                # Update user details
+                query_update = """
+                UPDATE Users_personal_details 
+                SET avatar_url = %s
+                WHERE user_id = %s
+                """
+                params_update = (avatar_url, user_id)
+                self.cur.execute(query_update, params_update)
+                self.conn.commit()
+                return make_response(jsonify({"message": "Account details updated successfully."}), 200)
+            else:
+                # Insert new user details
+                query_insert = """
+                INSERT INTO Users_personal_details (avatar_url, user_id) 
+                VALUES (%s, %s)
+                """
+                params_insert = (avatar_url, user_id)
+                self.cur.execute(query_insert, params_insert)
+                self.conn.commit()
+                return make_response(jsonify({"message": "Account details inserted successfully."}), 200)
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            return jsonify({"error": "An error occurred while updating account details. Please try again later."}), 500
+        except KeyError as ke:
+            missing_field = ke.args[0]
+            return jsonify({"error": f"Missing field: {missing_field}"}), 400
+        except Exception as e:
+            print(f"Exception: {e}")
+            return jsonify({"error": "An error occurred while updating account details. Please try again later."}), 500
+        finally:
+            if self.cur:
+                self.cur.close()
+            if self.conn:
+                self.conn.close()
