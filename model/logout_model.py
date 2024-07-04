@@ -89,3 +89,86 @@ class logout_model:
         finally:
             self.cur.close()  # Ensure the cursor is closed
             self.conn.close()  # Ensure the connection is closed
+
+
+class logoutmodel:
+    def __init__(self):
+        # Instantiate the input_validation class
+        self.validate_user_input = input_validation()
+        # Instantiate the db_conn class
+        db_connection = db_conn()
+
+        # Access the connection and cursor
+        self.conn = db_connection.conn
+        self.cur = db_connection.cur
+
+    def admin_logout(self, data):
+        try:
+            self.token = data["token"]
+            self.admin_id = data["id"]
+
+            try:
+                self.id = int(self.admin_id)
+            except ValueError as ve:
+                print(f"Exception: {ve}")
+                return jsonify({"error": "Logout failed. Please try again."}), 400
+            
+            admin_session = self.is_admin_session_exist()
+            if admin_session:
+                admin_id_from_db = admin_session[0]["admin_id"]
+                admin_token_from_db = admin_session[0]["session_token"]
+            else:
+                return jsonify({"error": "Logout failed. Please try again."}), 400
+            
+            if admin_token_from_db == self.token:
+                decoded_token = self.is_valid_session()
+                if decoded_token:
+                    admin_id_from_decoded_token = decoded_token["admin_id"]
+                    if admin_id_from_decoded_token == admin_id_from_db:
+                        admin_log_out = self.delete_admin_session(admin_id_from_decoded_token)
+                        return admin_log_out
+
+        except KeyError as ke:
+            missing_field = ke.args[0]
+            return jsonify({"error": f"Missing field: {missing_field}"}), 400
+        except Exception as e:
+            print(f"Exception: {e}")
+            return jsonify({"error": "An error occurred while logging out. Please try again later."}), 500
+
+    def is_admin_session_exist(self):
+        query = "SELECT admin_id, session_token FROM Admins WHERE admin_id=%s"
+        params = (self.id,)
+        try:
+            self.cur.execute(query, params)
+            result = self.cur.fetchall()
+            if result:
+                return result
+            else:
+                return False
+            
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            return jsonify({"error": "An error occurred while logging out. Please try again later."}), 500
+    
+    def is_valid_session(self):
+        # create a jwt token
+        secret = jwt_secret["secret"]
+        try:
+            decoded_token = jwt.decode(self.token, secret, algorithms=["HS256"])
+            return decoded_token
+        except jwt.ExpiredSignatureError:
+            return jsonify({"message": "You have successfully logged out."}), 401
+    
+    def delete_admin_session(self, admin_id):
+        query = "UPDATE Admins SET session_token = NULL WHERE admin_id = %s"
+        params = (admin_id,)
+        try:
+            self.cur.execute(query, params)
+            self.conn.commit()  # Commit the transaction
+            return jsonify({"message": "You have successfully logged out."}), 200  # 200 OK for successful logout
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
+            return jsonify({"error": "An error occurred while logging out. Please try again later."}), 500
+        finally:
+            self.cur.close()  # Ensure the cursor is closed
+            self.conn.close()  # Ensure the connection is closed
