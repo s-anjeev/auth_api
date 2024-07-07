@@ -163,3 +163,23 @@ class input_validation():
 
         # If validation passes
         return True
+    
+    # user and admin role validator 
+    def role_validation(self,role):
+        role = str(role).strip()
+        roles = ["user","admin"]
+        if role not in roles:
+            return jsonify({"error":"An error occurred while deleting account. Please try again later."}), 400
+        else:
+            return True
+        
+    # validate user_id 
+    def user_id_validation(self,user_id):
+        if user_id:
+            try:
+                user_id = int(user_id)
+                return True
+            except Exception as e:
+                return jsonify({"error":"An error occurred while deleting account. Please try again later."}), 400
+        else:
+            return jsonify({"error":"user id cannot be empty"}), 400

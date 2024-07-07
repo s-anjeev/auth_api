@@ -102,7 +102,6 @@ class login_model:
         hash_func = hashlib.sha256()
         hash_func.update(salted_password)
         hashed_password = hash_func.hexdigest()
-        print(hashed_password)
         if hashed_password == password_hash:
             return True
         else:
