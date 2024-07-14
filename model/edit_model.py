@@ -3,10 +3,12 @@ from datetime import datetime
 import mysql.connector
 from utils.db import db_conn
 from utils.input_validation import input_validation
+import re
 
 class edit_user:
     def __init__(self):
         self.validate_user_input = input_validation()
+        
         db_connection = db_conn()
         self.conn = db_connection.conn
         self.cur = db_connection.cur
@@ -56,12 +58,6 @@ class edit_user:
             gender_valid = self.validate_user_input.gender_validation(gender)
             if gender_valid is not True:
                 return gender_valid
-
-            # Validate avatar endpoint
-            # avatar_valid = self.validate_user_input.avatar_endpoint_validation(avatar_url)
-            # if avatar_valid is not True:
-            #     return avatar_valid
-
 
             # Check if user exists in the Users_personal_details table
             query_search = "SELECT * FROM Users_personal_details WHERE user_id = %s"
@@ -168,3 +164,102 @@ class edit_user:
                 self.cur.close()
             if self.conn:
                 self.conn.close()
+
+
+class UserEditByAdmin:
+    def __init__(self):
+        self.validate_user_input = input_validation()
+
+        db_connection = db_conn()
+        self.conn = db_connection.conn
+        self.cur = db_connection.cur
+
+    def validate_admin(self, admin_id):
+        query_search = "SELECT * FROM admins WHERE admin_id = %s"
+        param_search = (admin_id,)
+        self.cur.execute(query_search, param_search)
+        return self.cur.fetchone() is not None
+
+    def validate_user(self, user_id):
+        query_search = "SELECT * FROM Users_personal_details WHERE user_id = %s"
+        param_search = (user_id,)
+        self.cur.execute(query_search, param_search)
+        return self.cur.fetchone() is not None
+
+    def validate_data(self, data):
+        validations = {
+            "first_name": self.validate_user_input.first_last_name_validation,
+            "last_name": self.validate_user_input.first_last_name_validation,
+            "country": self.validate_user_input.country_validation,
+            "phone_number": self.validate_user_input.phone_number_validation,
+            "gender": self.validate_user_input.gender_validation,
+            "date_of_birth": self.validate_user_input.date_of_birth_validation
+        }
+
+        for field, validator in validations.items():
+            if field in data and data[field]:
+                is_valid = validator(data[field])
+                if is_valid is not True:
+                    return False, is_valid
+        return True, None
+
+    def validate_account_data(self, data):
+        if "username" in data and data["username"]:
+            new_username = str(data["username"])
+            if not (5 <= len(new_username) <= 12 and re.match("^[a-zA-Z0-9]+$", new_username)):
+                return False, "Username must be 5-12 characters long and contain only alphanumeric characters."
+
+        if "email" in data and data["email"]:
+            pattern = re.compile(r'^(?P<local_part>[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+)@(?P<domain>(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})$')
+            if not pattern.match(data["email"]):
+                return False, "Invalid email address."
+
+        return True, None
+
+    def update_user(self, table, user_id, data):
+        set_clauses = ", ".join([f"{key}=%s" for key in data.keys()])
+        query = f"UPDATE {table} SET {set_clauses} WHERE user_id=%s"
+        values = list(data.values()) + [user_id]
+
+        try:
+            self.cur.execute(query, values)
+            self.conn.commit()
+            return True, None
+        except Exception as e:
+            return False, str(e)
+
+    def user_edit_by_admin(self, username, user_id, update_type, admin_id, data):
+        if update_type not in ["personal", "account"]:
+            return jsonify({"error": "Invalid operation, please try again later"}), 400
+
+        if not self.validate_admin(admin_id):
+            return jsonify({"error": "Invalid admin ID"}), 400
+
+        if not self.validate_user(user_id):
+            return jsonify({"error": "User not found"}), 404
+
+        if update_type == "personal":
+            is_valid, error = self.validate_data(data)
+            if not is_valid:
+                return jsonify({"error": error}), 400
+
+            if "date_of_birth" in data:
+                try:
+                    data["date_of_birth"] = datetime.strptime(data["date_of_birth"], "%Y-%m-%d").date()
+                except ValueError as e:
+                    return jsonify({"error": f"Invalid date format: {e}"}), 400
+
+            success, error = self.update_user("Users_personal_details", user_id, data)
+            if not success:
+                return jsonify({"error": error}), 500
+
+        else:  # update_type == "account"
+            is_valid, error = self.validate_account_data(data)
+            if not is_valid:
+                return jsonify({"error": error}), 400
+
+            success, error = self.update_user("Users_account_details", user_id, data)
+            if not success:
+                return jsonify({"error": error}), 500
+
+        return jsonify({"message": "User updated successfully"}) if success else jsonify({"message": "Nothing to update"}), 200

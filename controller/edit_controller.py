@@ -1,12 +1,12 @@
 from app import app
 from flask import jsonify,request
-from model.edit_model import edit_user
-from utils.aouth_model import token_auth
+from model.edit_model import edit_user,UserEditByAdmin
+from utils.aouth_model import token_auth,admin_token_auth
 from datetime import datetime
 
 
 auth = token_auth()
-
+admin_auth = admin_token_auth()
 
 @app.route('/user/profile/edit', methods=["PATCH"])
 @auth.token_auth()
@@ -51,3 +51,20 @@ def edit_avatar(user_id):
 
     edit_profile = edit_user()
     return edit_profile.edit_user_avatar(unique_file_address,user_id)
+
+
+@app.route('/admin/edit-user/<username>/<user_id>/<update_type>', methods=["PATCH"])
+def admin_edit_user(username,user_id,update_type):
+    admin_id = 1
+    try:
+        data=request.get_json()
+        if data is None:
+            raise ValueError("No JSON data provided")
+    except ValueError as ve:
+        return jsonify({"error": "Invalid JSON data", "message": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"error": "Bad request", "message": str(e)}), 400
+
+    obj_edituer = UserEditByAdmin()
+    response = obj_edituer.user_edit_by_admin(username,user_id,update_type,admin_id,data)
+    return response
