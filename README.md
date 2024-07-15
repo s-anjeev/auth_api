@@ -1,6 +1,19 @@
 # auth_api
 This API provides user authentication and authorization functionalities with two roles: admin and user. By default, new users are assigned the user role. The API supports user registration, login, accessing and updating account details, logging out, account deletion, and password changes. Admin users have additional privileges to access user-specific endpoints.
 
+## Quick links
+* user
+    1. [User sign up](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#1-endpoint-sign-up)
+    2. [User login](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#2-endpoint-login)
+    3. [Update user](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#3-endpoint-userprofileedit)
+    4. [Update user avatar](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#4-endpoint-userprofileeditavatar)
+    5. [Log out](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#5-endpoint-logout)
+    6. [User dashboard](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#6-endpoint-userdashboard)
+    7. [Delete account](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#7-endpoint-userdelete-account)
+* admin
+    1. [demo](https://example.com)
+   
+
 ### 1. Endpoint: /sign-up
 This endpoint allows a new user to create an account by providing an email, username, and password. All input fields must meet specific validation criteria.
 
