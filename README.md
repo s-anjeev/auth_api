@@ -96,6 +96,123 @@ headers = {
     "Content-Type": "application/json"
 }
 
-response = requests.post(url, json=payload, headers=headers)
+response = requests.patch(url, json=payload, headers=headers)
 print(response.json())
 ```
+
+### 4. Endpoint: /user/profile/edit/avatar
+This endpoint allows an authenticated, authorized user to update users avatar. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. The input must be a image file and must pass validation checks.
+
+### Request Body Example
+Method PATCH
+```
+Upload your avatar image.
+```
+
+### Python Example
+```
+import requests
+
+url = "https://api.example.com/user/profile/edit/avatar"
+
+# Assuming the image file path is 'avatar.jpg'
+files = {
+    "avatar": ("avatar.jpg", open("avatar.jpg", "rb"), "image/jpeg")
+}
+
+headers = {
+    "Authorization":"Bearer token_here"
+}
+
+response = requests.patch(url, files=files, headers=headers)
+print(response.json())
+```
+
+
+### 5. Endpoint: /logout
+Logout endpoint ```/logout``` allows an authenticated user to log out. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. Authorization_token is blacklisted after successful logout.
+
+### Request Body Example
+Method GET
+```
+{
+    "token": "demo value",  # user authorization token
+    "id": "demo value"      # user id
+}
+```
+
+### Python Example
+```
+import requests
+
+url = "https://api.example.com/logout"
+payload = {
+    "token": "demo value",  # user authorization token
+    "id": "demo value"      # user id
+}
+headers = {
+    "Authorization": "Bearer token_here",
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, json=payload, headers=headers)
+print(response.json())
+```
+
+
+### .6 Endpoint: /user/dashboard
+Using endpoint ```/user/dashboard``` an authorized user can view account related data. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. 
+
+### Request Body Example
+Method GET
+```
+None
+```
+
+### Python Example
+```
+import requests
+
+url = "https://api.example.com/user/dashboard"
+headers = {
+    "Authorization": "Bearer token_here",
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+
+### .7 Endpoint: /user/delete-account
+This endpoit allow an authorized user to permanently delete there account. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. 
+
+### Request Body Example
+Method GET
+```
+{
+    "username":"demo value"  # unique username of user
+    "user_id":"demo value"   # unique user_id of user
+    "role":"demo value"      # role of user. (i.e user, by default)
+}
+```
+
+### Python Example
+```
+import requests
+
+url = "https://api.example.com/logout"
+payload = {
+    "username":"demo value"  # unique username of user
+    "user_id":"demo value"   # unique user_id of user
+    "role":"demo value"      # role of user. (i.e user, by default)
+}
+headers = {
+    "Authorization": "Bearer token_here",
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, json=payload, headers=headers)
+print(response.json())
+```
+
