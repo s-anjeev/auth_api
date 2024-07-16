@@ -25,7 +25,6 @@ class token_auth():
                             secret = jwt_secret["secret"]
                             decoded_token = jwt.decode(token, secret, algorithms="HS256")
                             admin_id = decoded_token["admin_id"]
-                            # print(decoded_token)
                             # Pass the admin_id to the endpoint function
                             kwargs['admin_id'] = admin_id
                         except jwt.ExpiredSignatureError:
@@ -64,7 +63,6 @@ class admin_token_auth():
                             secret = jwt_secret["secret"]
                             decoded_token = jwt.decode(token, secret, algorithms="HS256")
                             admin_id = decoded_token["admin_id"]
-                            # print(decoded_token)
                             # Pass the admin_id to the endpoint function
                             kwargs['admin_id'] = admin_id
                         except jwt.ExpiredSignatureError:

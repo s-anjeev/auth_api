@@ -30,7 +30,3 @@ class db_conn:
         if self.conn:
             self.conn.close()
         print("Connection closed")
-
-    # def __del__(self):
-    #     """Destructor to ensure the connection is closed."""
-    #     self.close()
