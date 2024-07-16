@@ -173,7 +173,7 @@ print(response.json())
 ```
 
 
-### .6 Endpoint: /user/dashboard
+### 6. Endpoint: /user/dashboard
 Using endpoint ```/user/dashboard``` an authorized user can view account related data. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. 
 
 ### Request Body Example
@@ -197,7 +197,7 @@ print(response.json())
 ```
 
 
-### .7 Endpoint: /user/delete-account
+### 7. Endpoint: /user/delete-account
 This endpoit allow an authorized user to permanently delete there account. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. 
 
 ### Request Body Example
@@ -230,7 +230,7 @@ print(response.json())
 ```
 
 
-### .8 Endpoint: /admin/login
+### 8. Endpoint: /admin/login
 This endpoint allows an admin user to log in by providing admin email and password. The input must be in JSON format and must pass validation checks. After successfull login in return admin gets a token with administrator level access.
 
 ### Request Body Example
@@ -303,7 +303,7 @@ headers = {
 
 response = requests.patch(url, json=payload, headers=headers)
 print(response.json())
-
+```
 
 ### 10. Endpoint: /admin/logout
 Logout endpoint ```/logout``` allows an authenticated admin to log out. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. aAdmin authorization_token is blacklisted after successful logout.
@@ -340,9 +340,6 @@ This endpoint allow an admin to fetch accounts of all users. Access to this endp
 
 ### Request Body Example
 Method GET
-```
-
-```
 
 ### Python Example
 ```
@@ -357,3 +354,4 @@ headers = {
 
 response = requests.get(url, headers=headers)
 print(response.json())
+```
