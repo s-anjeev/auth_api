@@ -1,0 +1,12 @@
+#required libraries
+os
+glob
+flask
+datetime
+mysql
+re
+hashlib
+jwt
+logging
+functools
+flask_cors
