@@ -229,3 +229,131 @@ response = requests.get(url, json=payload, headers=headers)
 print(response.json())
 ```
 
+
+### .8 Endpoint: /admin/login
+This endpoint allows an admin user to log in by providing admin email and password. The input must be in JSON format and must pass validation checks. After successfull login in return admin gets a token with administrator level access.
+
+### Request Body Example
+Method POST
+```
+{
+    "email": "example@gmail.com",     # admin email
+    "password": "Exa@mp1e"            # admin password
+}
+```
+
+### Python Example
+```
+import requests
+
+url = "https://api.example.com/login"
+payload = {
+    "email": "example@gmail.com",   # admin email
+    "password": "Exa@mp1e"          # admin password
+}
+headers = {
+    "Content-Type": "application/json"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())
+```
+
+### 9. Endpoint: /admin/edit-user/username_here/user_id_here/update_type_here
+This endpoint allows an authorized admin user to edit users personal and account data. TO update a user replace 'username_here' with ```username```,user_id_here with ```user_id```, of user whose account you want to update and 'update_type_here' with ```personal``` if you want to update personal data and ```account``` if you want to update account related data. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` admin_token with administrator level access. The input must be in JSON format and must pass validation checks.
+
+### Request Body Example
+Method PATCH
+```
+# when updating personal details
+{
+    "first_name":"demo value",
+    "last_name":"demo value",
+    "country":"demo value",
+    "phone_number":"demo value",
+    "date_of_birth":"demo value",
+    "gender":"demo value"
+}
+
+# when updating account details
+{
+    "email": "example@gmail.com",
+    "username":"username",              
+    "password": "Exa@mp1e"
+}
+```
+
+### Python Example
+```
+import requests
+
+url = "https://api.example.com/user/profile/edit"
+payload = {
+    "first_name":"demo value",      # only alphanumeric characters are allowed.
+    "last_name":"demo value",       # only alphanumeric characters are allowed.
+    "country":"demo value",         # only country codes are allowed e.g IND, USD, etc.
+    "phone_number":"demo value",    # only numbers are allowed.
+    "date_of_birth":"demo value",   # allowed date format "%Y-%m-%d"
+    "gender":"demo value"           # Male, Female, others.
+}
+headers = {
+    "Authorization":"Bearer token_here"
+    "Content-Type": "application/json"
+}
+
+response = requests.patch(url, json=payload, headers=headers)
+print(response.json())
+
+
+### 10. Endpoint: /admin/logout
+Logout endpoint ```/logout``` allows an authenticated admin to log out. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. aAdmin authorization_token is blacklisted after successful logout.
+
+### Request Body Example
+Method GET
+```
+{
+    "token": "demo value",  # admin authorization token
+    "id": "demo value"      # admin id
+}
+```
+
+### Python Example
+```
+import requests
+
+url = "https://api.example.com/amin/logout"
+payload = {
+    "token": "demo value",  # admin authorization token
+    "id": "demo value"      # admin id
+}
+headers = {
+    "Authorization": "Bearer token_here",
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, json=payload, headers=headers)
+print(response.json())
+```
+
+### 11. Endpoint: /admin/get-all-users/limit/limit_here/page/page_number
+This endpoint allow an admin to fetch accounts of all users. Access to this endpoint allowed based on ```Authorization``` header with ```Bearer``` token. Replace 'limit_here' with number of records you want at one and replace 'page_number' with number of page from where you want to list users.
+
+### Request Body Example
+Method GET
+```
+
+```
+
+### Python Example
+```
+import requests
+
+url = "https://api.example.com/admin/get-all-users/limit/10/page/1"
+
+headers = {
+    "Authorization": "Bearer token_here",
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, headers=headers)
+print(response.json())
