@@ -11,7 +11,10 @@ This API provides user authentication and authorization functionalities with two
     6. [User dashboard](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#6-endpoint-userdashboard)
     7. [Delete account](https://github.com/s-anjeev/auth_api?tab=readme-ov-file#7-endpoint-userdelete-account)
 * admin
-    1. [demo](https://example.com)
+    1. [Admin login](https://github.com/s-anjeev/auth_api#8-endpoint-adminlogin)
+    2. [Update users](https://github.com/s-anjeev/auth_api#9-endpoint-adminedit-userusername_hereuser_id_hereupdate_type_here)
+    3. [Admin logout](https://github.com/s-anjeev/auth_api#10-endpoint-adminlogout)
+    4. [Get all users](https://github.com/s-anjeev/auth_api#11-endpoint-adminget-all-userslimitlimit_herepagepage_number)
    
 
 ### 1. Endpoint: /sign-up
